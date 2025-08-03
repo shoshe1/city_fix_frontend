@@ -1411,6 +1411,8 @@ function initializeUserProfile() {
     const imgEl = document.getElementById('userProfileImage');
     if (userId && imgEl) {
         console.log('[CityFix] 🔍 Attempting to load profile image for user:', userId);
+        console.log('[CityFix] 🌐 Using backend URL:', `https://city-fix-backend.onrender.com/api/users/${userId}/image`);
+        
         fetch(`https://city-fix-backend.onrender.com/api/users/${userId}/image`)
             .then(res => {
                 console.log('[CityFix] 📡 Image API response status:', res.status);
@@ -1419,9 +1421,11 @@ function initializeUserProfile() {
                 if (res.ok) {
                     return res.blob();
                 } else if (res.status === 404) {
-                    // User doesn't have a profile image uploaded
-                    console.log('[CityFix] 📷 User has no profile image uploaded (404)');
-                    throw new Error('No profile image found');
+                    // User doesn't have a profile image uploaded to Render backend
+                    console.log('[CityFix] 📷 User has no profile image on Render backend (404)');
+                    console.log('[CityFix] 💡 This user may exist locally but not on Render deployment');
+                    console.log('[CityFix] 💡 Try registering again on the deployed site to upload image to Render');
+                    throw new Error('No profile image found on Render backend');
                 } else if (res.status === 500) {
                     // Server error - might be a backend issue
                     console.log('[CityFix] ⚠️ Backend server error (500) - image service might be down');
@@ -1438,14 +1442,15 @@ function initializeUserProfile() {
                 if (blob) {
                     const imgUrl = URL.createObjectURL(blob);
                     imgEl.src = imgUrl;
-                    console.log('[CityFix] ✅ Profile image loaded successfully');
+                    console.log('[CityFix] ✅ Profile image loaded successfully from Render backend');
                 } else {
                     imgEl.src = 'assets/profile.svg';
                     console.log('[CityFix] 📷 No profile image blob, using default');
                 }
             })
             .catch(error => {
-                console.log('[CityFix] ❌ Error loading profile image:', error);
+                console.log('[CityFix] ❌ Error loading profile image:', error.message);
+                console.log('[CityFix] 🔄 Using default profile image instead');
                 imgEl.src = 'assets/profile.svg';
             });
     } else if (imgEl) {
@@ -1559,31 +1564,48 @@ function testProfileImageAPI() {
     }
     
     console.log('[CityFix] 🧪 Testing profile image API for user:', userId);
+    console.log('[CityFix] 🌐 Testing on Render backend...');
     
-    // Test direct API access
-    fetch(`https://city-fix-backend.onrender.com/api/users/${userId}/image`)
+    // Test if user profile exists first
+    fetch(`https://city-fix-backend.onrender.com/api/users/profile/${userId}`)
         .then(res => {
-            console.log('[CityFix] 🧪 API Test - Status:', res.status);
-            console.log('[CityFix] 🧪 API Test - Headers:', Object.fromEntries(res.headers.entries()));
+            console.log('[CityFix] 🧪 Profile API Test - Status:', res.status);
+            if (res.ok) {
+                return res.json();
+            } else {
+                throw new Error(`Profile not found: HTTP ${res.status}`);
+            }
+        })
+        .then(profileData => {
+            console.log('[CityFix] ✅ User profile exists on Render backend:', profileData.user);
+            
+            // Now test image API
+            return fetch(`https://city-fix-backend.onrender.com/api/users/${userId}/image`);
+        })
+        .then(res => {
+            console.log('[CityFix] 🧪 Image API Test - Status:', res.status);
+            console.log('[CityFix] 🧪 Image API Test - Headers:', Object.fromEntries(res.headers.entries()));
             
             if (res.ok) {
                 return res.blob().then(blob => {
-                    console.log('[CityFix] 🧪 API Test - Blob size:', blob.size, 'bytes');
-                    console.log('[CityFix] 🧪 API Test - Blob type:', blob.type);
+                    console.log('[CityFix] 🧪 Image API Test - Blob size:', blob.size, 'bytes');
+                    console.log('[CityFix] 🧪 Image API Test - Blob type:', blob.type);
                     return blob;
                 });
             } else {
                 return res.text().then(text => {
-                    console.log('[CityFix] 🧪 API Test - Error response:', text);
+                    console.log('[CityFix] 🧪 Image API Test - Error response:', text);
                     throw new Error(`HTTP ${res.status}: ${text}`);
                 });
             }
         })
         .then(blob => {
-            console.log('[CityFix] ✅ Profile image exists and is accessible');
+            console.log('[CityFix] ✅ Profile image exists and is accessible on Render backend');
         })
         .catch(error => {
-            console.log('[CityFix] ❌ Profile image test failed:', error.message);
+            console.log('[CityFix] ❌ Test failed:', error.message);
+            console.log('[CityFix] 💡 This user may not exist on the Render backend');
+            console.log('[CityFix] 💡 Try registering again on the deployed site');
         });
 }
 
