@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="theme-color" content="#ffffff">
+    <meta name="description" content="Sign up for CityFix - Your smart city reporting platform">
+    <title>CityFix - Sign Up</title>
+    
+  <link rel="icon" href="../assets/CityFix-logo.svg" type="image/svg+xml">
+    
+     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/signup.css">
+    
+    <script defer src="js/login-signup.js"></script>
+    <script src="js/footer-user.js"></script>
+</head>
+<body>
+  
+  <main class="main-content">
+    <div class="split-container">
+      <div class="left-container">
+        <img src="assets/login_img.png" alt="Signup Image" class="signup-image" />
+        <div class="image-overlay">
+          <h3 class="overlay-title">CityFix</h3>
+          <p class="overlay-subtitle">Making our city better, together.</p>
+        </div>
+      </div>
+      <div class="right-container">
+        <div class="right-content">
+          <img src="assets/CityFix-logo.svg" alt="CityFix Logo" class="signup-logo" />
+          <h1 class="welcome-title">Join CityFix</h1>
+          <p class="welcome-subtitle">Create your account to start reporting</p>
+          
+          <div class="signup-form-container">
+            <label class="fullname-label">Username</label>
+            <div class="fullname-input-container">
+              <input type="text" class="fullname-input" placeholder="Enter your full name" name="username" />
+            </div>
+
+            <label class="email-label">Email address</label>
+            <div class="email-input-container">
+              <input type="email" class="email-input" placeholder="Enter your email" name="user_email" />
+            </div>
+
+            <label class="password-label">Password</label>
+            <div class="password-input-container">
+              <input type="password" class="password-input" placeholder="Create a password" name="password" />
+            </div>
+
+            <!-- User ID Section -->
+            <label class="confirm-password-label">User ID</label>
+            <div class="confirm-password-input-container">
+              <input type="number" class="confirm-password-input" placeholder="Enter your user ID (numbers only)" name="user_id" />
+            </div>
+
+            <label class="photo-label" style="position:relative;top:360px;left:0;font-family:Poppins;font-size:14px;color:#374151;margin:0;">Profile Photo</label>
+            <div class="photo-input-container" style="position:relative;top:365px;left:0;">
+              <input type="file" class="photo-input" name="user_photo" accept="image/*" style="font-family:Poppins;font-size:13px;" />
+            </div>
+
+
+            <div class="user-type-container">
+                <label for="">I am a :  </label>
+              <div class="radio-option">
+                <input type="radio" id="citizen" name="userType" value="citizen" class="radio-input" checked />
+                <label for="citizen" class="radio-label">Citizen</label>
+              </div>
+              <div class="radio-option">
+                <input type="radio" id="admin" name="userType" value="admin" class="radio-input" />
+                <label for="admin" class="radio-label">Admin</label>
+              </div>
+            </div>
+          </div>
+          
+          <div class="signup-button-container">
+            <button class="signup-btn">
+              <span class="signup-btn-text">Sign Up</span>
+            </button>
+          </div>
+          
+          <div class="login-prompt">
+            Already have an account? <a href="login.html" class="login-link">Log in</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+    <div class="footer-container">
+      <div class="footer-top">
+        <div class="footer-column">
+          <a href="index.html" class="footer-logo">
+            <img src="assets/CityFix-logo.svg" alt="CityFix Logo" class="footer-logo-img" />
+            <span class="brand-name">CityFix</span>
+          </a>
+          <p class="footer-description">Making our city better, one report at a time.</p>
+        </div>
+        
+        <div class="footer-column">
+          <h4>Support</h4>
+          <a href="#">Help Center</a>
+          <a href="#">Contact Us</a>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+        </div>
+        <div class="footer-column">
+          <h4>Connect</h4>
+          <div class="social-icons">
+            <a href="#"><img src="assets/share-icon.svg" alt="Share" class="social-icon" /></a>
+            <a href="#"><img src="assets/share-icon.svg" alt="Twitter" class="social-icon" /></a>
+            <a href="#"><img src="assets/share-icon.svg" alt="LinkedIn" class="social-icon" /></a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 CityFix. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
