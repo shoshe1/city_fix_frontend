@@ -1,0 +1,237 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CityFix -  Reports Details</title>
+   
+    <!-- Favicon -->
+    <link rel="icon" href="assets/Logo-cityfix.jpg" type="image/png">
+   
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+   
+    <!-- CSS Stylesheet -->
+    <link rel="stylesheet" href="css/Base.css">
+    <link rel="stylesheet" href="css/ReportsDetails.css">
+</head>
+<body>
+    <!-- Mobile Header -->
+    <header class="mobile-header">
+        <div class="mobile-logo">
+            <div class="logo-icon-mobile"></div>
+            <div class="logo-text-mobile">CityFix Admin</div>
+        </div>
+        <div class="hamburger-btn" onclick="toggleSidebar()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </header>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="logo-section">
+            <div class="logo-container">
+                <div class="logo-icon"></div>
+                <div class="logo-text-container">
+                    <div class="logo-text">CityFix Admin</div>
+                </div>
+            </div>
+        </div>
+        <nav class="nav-menu">
+            <a href="dashboard.html" class="nav-item" data-icon="dashboard">
+                <span class="nav-icon"></span>
+                <span class="nav-text">Dashboard</span>
+            </a>
+           
+            <a href="reports.html" class="nav-item active" data-icon="reports">
+                <span class="nav-icon"></span>
+                <span class="nav-text">Reports</span>
+            </a>
+           
+          
+            <a href="settings.html" class="nav-item" data-icon="settings">
+                <span class="nav-icon"></span>
+                <span class="nav-text">Settings</span>
+            </a>
+        </nav>
+    </div>
+
+    
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <div class="content-wrapper">
+            <!-- Dashboard Header -->
+            <div class="dashboard-header">
+                <div class="header-left">
+                    <h1>Report Details</h1>
+                    <p id="report-type"></p>
+                </div>
+                <div class="header-right">
+              
+                    <div class="user-profile" id="profileContainer">
+                        <img class="user-avatar" id="admin-avatar" src="assets/profile.svg" alt="Admin Avatar" style="width:40px;height:40px;border-radius:50%;object-fit:cover;vertical-align:middle;cursor:pointer;">
+                        <div class="profile-dropdown" id="profileDropdown" style="display: none;">
+                            <div class="profile-dropdown-item" id="logoutBtn">Logout</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Back Button -->
+            <a href="reports.html" class="back-btn">
+                <div class="back-icon">←</div>
+                Back to Reports
+            </a>
+
+            <div class="report-details-header">
+                <div class="report-details-title">
+                    <div>
+                        <h2 id="report-type-title"></h2>
+                        <p class="report-id" id="report-date"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Report Details Content -->
+            <div class="report-details-content">
+                <!-- Left Column -->
+                <div class="report-main-content">
+                    <!-- Report Image Section -->
+                    <div class="report-image-section">
+                        <h2 class="image-title">Report Image</h2>
+                        <div class="image-container" id="report-image-container">
+                            <img id="report-image" src="" alt="Report Image" style="display: none;">
+                            <div class="image-placeholder" id="image-placeholder">
+                                <div class="placeholder-icon">📷</div>
+                                <p>Loading image...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Map Section -->
+                    <div class="report-map-section">
+                        <div class="map-container" id="map-container">
+                            <!-- Map will be rendered here -->
+                        </div>
+                    </div>
+
+                    <!-- Description Section -->
+                    <div class="report-description-section">
+                        <h2 class="description-title">Description</h2>
+                        <p class="description-text" id="report-description"></p>
+                    </div>
+
+                </div>
+
+                <!-- Right Column -->
+                <div class="report-sidebar">
+                    <div class="status-notes-container">
+                        <!-- Status Section -->
+                        <div class="status-section">
+                            <h3 class="status-title">Status</h3>
+                            <select class="status-dropdown" id="report-status">
+                                <option value="progress">In Progress</option>
+                                <option value="pending">Pending</option>
+                                <option value="resolved">Resolved</option>
+                                <option value="closed">Rejected</option>
+                            </select>
+                        </div>
+
+                        <!-- Notes Section -->
+                        <div class="notes-section">
+                            <h3 class="notes-title">Admin Notes</h3>
+                            <div class="note-input-section">
+                                <textarea 
+                                    id="admin-note" 
+                                    class="notes-textarea" 
+                                    placeholder="Add a note for the user who submitted this report..."
+                                    rows="4"
+                                ></textarea>
+                                <div class="note-options">
+                                    <label class="checkbox-container">
+                                        <input type="checkbox" id="notify-user" checked>
+                                        <span class="checkmark"></span>
+                                        Send notification to user
+                                    </label>
+                                </div>
+                                <button class="save-btn" id="save-status-btn">
+                                    <span class="btn-text">Update Status & Send Note</span>
+                                    <span class="btn-loading" style="display: none;">⏳ Sending...</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="dashboard-footer">
+        <div class="footer-content">
+            <div class="footer-column">
+                <a href="dashboard.html" class="footer-logo">
+                    <img src="assets/CityFix-logo.svg" alt="CityFix Logo" class="footer-logo-img" />
+                    <span class="brand-name">CityFix</span>
+                </a>
+                <p class="footer-description">Making our city better together.</p>
+            </div>
+            
+            <div class="footer-section links">
+                <h4>Quick Links</h4>
+                <div class="footer-links">
+                    <a href="dashboard.html">Dashboard</a>
+                    <a href="reports.html">Reports</a>
+                </div>
+            </div>
+            
+            <div class="footer-section tools">
+                <h4>Admin Tools</h4>
+                <div class="footer-links">
+                    <a href="team.html">Team Management</a>
+                    <a href="settings.html">Settings</a>
+                </div>
+            </div>
+            
+            <div class="footer-section support">
+                <h4>Support</h4>
+                <div class="footer-links">
+                    <a href="#contact">Contact IT</a>
+                    <a href="#privacy">Privacy Policy</a>
+                </div>
+            </div>
+            
+            <div class="footer-column">
+                <h4>Follow Us</h4>
+                <div class="social-icons">
+                    <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
+                        <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/twitter.svg" alt="Twitter" class="social-icon" />
+                    </a>
+                    <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
+                        <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/facebook.svg" alt="Facebook" class="social-icon" />
+                    </a>
+                    <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
+                        <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/instagram.svg" alt="Instagram" class="social-icon" />
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>© 2025 CityFix. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Overlay for mobile -->
+    <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+    <script src="js/admin/ReportsDetails.js"></script>
+    <script src="js/admin/footer-admin.js"></script>
+    <script src="js/admin/admin.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC6jZx_eYnWWpBMMGEIVdNwmlNgWbfDqtM&libraries=geometry,places" async defer></script>
+
+</body>
+</html>
