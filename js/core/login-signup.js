@@ -91,12 +91,13 @@ function setupSignupForm() {
         formData.append('user_id', userId);
         formData.append('user_type', userType);
         
-        // TEMPORARILY DISABLE PHOTO UPLOAD FOR TESTING
         // Add photo if one was selected
-        // if (photoInput.files.length > 0) {
-        //     formData.append('user_photo', photoInput.files[0]);
-        // }
-        console.log('🚫 Photo upload temporarily disabled for testing');
+        if (photoInput.files.length > 0) {
+            formData.append('user_photo', photoInput.files[0]);
+            console.log('� Profile photo selected:', photoInput.files[0].name, photoInput.files[0].size, 'bytes');
+        } else {
+            console.log('📷 No profile photo selected - user will have default image');
+        }
         
         // Debug: Log the form data being sent
         console.log('📤 Form data being sent:');
@@ -194,18 +195,36 @@ function setupSignupForm() {
             const numericUserId = data.user.user_id;
             const userType = (data.user.user_type || '').toLowerCase().trim();
             
-            localStorage.setItem('cityfix_user', JSON.stringify({
-                _id: mongoId,
-                userId: numericUserId,
-                username: data.user.username,
-                email: data.user.user_email,
-                userType: data.user.user_type,
-                token: data.token,
-                isLoggedIn: true
-            }));
+            console.log('📋 Storing user data:');
+            console.log('- MongoDB _id:', mongoId);
+            console.log('- Numeric user_id:', numericUserId);
+            console.log('- User type:', userType);
             
-            // Also store user_id for profile image logic
+            // Store complete user session data
+            const userSessionData = {
+                _id: mongoId,        // MongoDB ObjectId for API calls
+                userId: numericUserId, // Numeric ID for legacy compatibility
+                user_id: numericUserId, // Also store as user_id for compatibility
+                username: data.user.username,
+                user_email: data.user.user_email,
+                user_type: data.user.user_type,
+                token: data.token,
+                isLoggedIn: true,
+                registrationTime: new Date().toISOString()
+            };
+            
+            localStorage.setItem('cityfix_user', JSON.stringify(userSessionData));
+            
+            // Store individual values for compatibility
+            localStorage.setItem('user_token', data.token);
+            localStorage.setItem('user_name', data.user.username);
+            localStorage.setItem('user_email', data.user.user_email);
+            localStorage.setItem('user_type', data.user.user_type);
+            
+            // IMPORTANT: Store the numeric user_id for profile images (backend accepts numeric IDs)
             localStorage.setItem('user_id', numericUserId);
+            
+            console.log('✅ User session stored with numeric user_id for profile images');
             
             // Show success message
             showSuccess('Registration successful! Redirecting...');
@@ -361,7 +380,8 @@ function setupLoginForm() {
             };
             
             // Store in localStorage for session management
-            localStorage.setItem('user_id', apiUser.user_id.toString());
+            // IMPORTANT: Store numeric user_id for profile image compatibility  
+            localStorage.setItem('user_id', apiUser.user_id);
             localStorage.setItem('user_token', jwtToken);
             localStorage.setItem('user_name', apiUser.username);
             localStorage.setItem('user_email', apiUser.user_email);

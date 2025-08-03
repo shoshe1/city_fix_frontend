@@ -1377,48 +1377,80 @@ function initializeUserProfile() {
     // Replace profile icon with user image if signed in
     let userId = null;
     
-    // Try to get MongoDB _id from cityfix_user first
+    // Try to get user_id from cityfix_user first (prefer numeric user_id)
     try {
         const cityfixUser = JSON.parse(localStorage.getItem('cityfix_user') || '{}');
-        userId = cityfixUser._id || cityfixUser.userId;
         console.log('[CityFix] cityfix_user data:', cityfixUser);
-        console.log('[CityFix] Using userId:', userId);
+        
+        // Use numeric user_id (which works with backend API)
+        if (cityfixUser.user_id || cityfixUser.userId) {
+            userId = cityfixUser.user_id || cityfixUser.userId;
+            console.log('[CityFix] Using numeric user_id:', userId);
+        } else if (cityfixUser._id && cityfixUser._id !== 'unknown') {
+            // Fallback to MongoDB _id if needed
+            userId = cityfixUser._id;
+            console.log('[CityFix] Using MongoDB _id as fallback:', userId);
+        } else {
+            console.log('[CityFix] ⚠️ No valid user ID found in cityfix_user:', cityfixUser);
+        }
     } catch (e) {
         console.log('[CityFix] Error parsing cityfix_user:', e);
     }
     
-    // Fallback to legacy user_id if needed
+    // Fallback to localStorage user_id 
     if (!userId) {
-        userId = localStorage.getItem('user_id');
-        console.log('[CityFix] Fallback user_id:', userId);
+        const legacyUserId = localStorage.getItem('user_id');
+        if (legacyUserId && legacyUserId !== 'unknown') {
+            userId = legacyUserId;
+            console.log('[CityFix] Using legacy user_id from localStorage:', userId);
+        } else {
+            console.log('[CityFix] ⚠️ No valid user ID found anywhere');
+        }
     }
     
     const imgEl = document.getElementById('userProfileImage');
     if (userId && imgEl) {
-        // Only make API call if userId looks like a MongoDB ObjectId (24 hex characters)
-        if (userId.toString().match(/^[0-9a-fA-F]{24}$/)) {
-            fetch(`https://city-fix-backend.onrender.com/api/users/${userId}/image`)
-                .then(res => res.ok ? res.blob() : null)
-                .then(blob => {
-                    if (blob) {
-                        const imgUrl = URL.createObjectURL(blob);
-                        imgEl.src = imgUrl;
-                        console.log('[CityFix] ✅ Profile image loaded successfully');
-                    } else {
-                        imgEl.src = 'assets/profile.svg';
-                        console.log('[CityFix] 📷 No profile image, using default');
-                    }
-                })
-                .catch(error => {
-                    console.log('[CityFix] ❌ Error loading profile image:', error);
+        console.log('[CityFix] 🔍 Attempting to load profile image for user:', userId);
+        fetch(`https://city-fix-backend.onrender.com/api/users/${userId}/image`)
+            .then(res => {
+                console.log('[CityFix] 📡 Image API response status:', res.status);
+                console.log('[CityFix] 📡 Image API response headers:', res.headers);
+                
+                if (res.ok) {
+                    return res.blob();
+                } else if (res.status === 404) {
+                    // User doesn't have a profile image uploaded
+                    console.log('[CityFix] 📷 User has no profile image uploaded (404)');
+                    throw new Error('No profile image found');
+                } else if (res.status === 500) {
+                    // Server error - might be a backend issue
+                    console.log('[CityFix] ⚠️ Backend server error (500) - image service might be down');
+                    throw new Error('Backend image service error');
+                } else {
+                    // Log the error response
+                    return res.text().then(errorText => {
+                        console.log('[CityFix] ❌ Image API error response:', errorText);
+                        throw new Error(`HTTP ${res.status}: ${errorText}`);
+                    });
+                }
+            })
+            .then(blob => {
+                if (blob) {
+                    const imgUrl = URL.createObjectURL(blob);
+                    imgEl.src = imgUrl;
+                    console.log('[CityFix] ✅ Profile image loaded successfully');
+                } else {
                     imgEl.src = 'assets/profile.svg';
-                });
-        } else {
-            console.log('[CityFix] ⚠️ User ID is not MongoDB ObjectId format:', userId);
-            imgEl.src = 'assets/profile.svg';
-        }
+                    console.log('[CityFix] 📷 No profile image blob, using default');
+                }
+            })
+            .catch(error => {
+                console.log('[CityFix] ❌ Error loading profile image:', error);
+                imgEl.src = 'assets/profile.svg';
+            });
     } else if (imgEl) {
         imgEl.src = 'assets/profile.svg';
+        console.log('[CityFix] 📷 No user ID found, using default profile image');
     }
     
     // Display personalized welcome message with real user data
@@ -1515,6 +1547,48 @@ function displayUserDebugInfo() {
 document.addEventListener('DOMContentLoaded', function() {
     initializeUserProfile();
 });
+
+// Debug function to test profile image API
+function testProfileImageAPI() {
+    const cityfixUser = JSON.parse(localStorage.getItem('cityfix_user') || '{}');
+    const userId = cityfixUser.user_id || cityfixUser.userId || cityfixUser._id;
+    
+    if (!userId) {
+        console.log('[CityFix] ❌ No user ID found for testing');
+        return;
+    }
+    
+    console.log('[CityFix] 🧪 Testing profile image API for user:', userId);
+    
+    // Test direct API access
+    fetch(`https://city-fix-backend.onrender.com/api/users/${userId}/image`)
+        .then(res => {
+            console.log('[CityFix] 🧪 API Test - Status:', res.status);
+            console.log('[CityFix] 🧪 API Test - Headers:', Object.fromEntries(res.headers.entries()));
+            
+            if (res.ok) {
+                return res.blob().then(blob => {
+                    console.log('[CityFix] 🧪 API Test - Blob size:', blob.size, 'bytes');
+                    console.log('[CityFix] 🧪 API Test - Blob type:', blob.type);
+                    return blob;
+                });
+            } else {
+                return res.text().then(text => {
+                    console.log('[CityFix] 🧪 API Test - Error response:', text);
+                    throw new Error(`HTTP ${res.status}: ${text}`);
+                });
+            }
+        })
+        .then(blob => {
+            console.log('[CityFix] ✅ Profile image exists and is accessible');
+        })
+        .catch(error => {
+            console.log('[CityFix] ❌ Profile image test failed:', error.message);
+        });
+}
+
+// Make test function globally available
+window.testProfileImageAPI = testProfileImageAPI;
 
 // Global initMap function for Google Maps API callback
 window.initMap = function() {
