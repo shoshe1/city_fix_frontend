@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CityFix - Report City Issues, Make a Difference</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="assets/Logo-cityfix.jpg" type="image/png">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS Stylesheet -->
+    <link rel="stylesheet" href="css/homePage.css">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/notifications.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <a href="citizenhompage.html" class="logo-section">
+            <img src="assets/CityFix-logo.svg" alt="CityFix Logo" class="logo-image">
+            <span class="logo-text">CityFix</span>
+        </a>
+        
+        <nav class="nav-section">
+            <a href="citizenhompage.html" class="nav-item active">Home</a>
+            <a href="BrowseReports.html" class="nav-item">Reports</a>
+            <a href="SubmitReport.html" class="nav-item">Submit Report</a>
+            <a href="MyImpact.html" class="nav-item">My Impact</a>
+        </nav>
+        
+        <div class="auth-section">
+            <div class="notification-container" id="notificationContainer">
+                <div class="notification-icon" id="notification-icon" onclick="toggleNotifications()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span class="notification-badge" id="notification-badge" style="display: none;">0</span>
+                </div>
+                <!-- Notification Dropdown -->
+                <div class="notification-dropdown" id="notification-dropdown" style="display: none;">
+                    <div class="notification-header">
+                        <h4>Notifications</h4>
+                        <button class="mark-all-read" id="mark-all-read" onclick="markAllAsRead()" style="display: none;">Mark all read</button>
+                    </div>
+                    <div class="notification-list" id="notification-list">
+                        <div class="notification-empty">
+                            <div class="notification-icon">🔔</div>
+                            <p>Loading notifications...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="profile-icon" id="profileContainer">
+                <img id="userProfileImage" src="assets/profile.svg" alt="Profile" width="32" height="32" style="border-radius:50%; object-fit:cover; display:block;" />
+                <!-- Profile Dropdown -->
+                <div class="profile-dropdown" id="profileDropdown">
+                    <div class="profile-dropdown-item" id="logoutBtn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <polyline points="16,17 21,12 16,7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <line x1="21" y1="12" x2="9" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Logout
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <button class="mobile-menu-btn">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </header>
+
+    <!-- Mobile Navigation -->
+    <div class="mobile-nav">
+        <a href="citizenhompage.html" class="nav-item active">Home</a>
+        <a href="Reports.html" class="nav-item">Reports</a>
+        <a href="SubmitReport.html" class="nav-item">Submit Report</a>
+        <a href="MyImpact.html" class="nav-item">My Impact</a>
+    </div>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-container">
+                <div class="hero-content">
+                    <div class="welcome-message" id="welcomeMessage" style="display: none;">
+                        <p class="welcome-text">Welcome back, <span id="userNameDisplay" class="user-name-highlight"></span>!</p>
+                    </div>
+                    <h1 class="hero-title">Report City Issues,<br>Make a Difference</h1>
+                    <p class="hero-description">Help improve your community by reporting street issues. Together we can make our city better.</p>
+                    <a href="SubmitReport.html" class="hero-button">Submit a Report</a>
+                </div>
+                <div class="hero-image-container">
+                    <img src="assets/hero-image.webp" alt="Community helping to improve the city" class="hero-image">
+                </div>
+            </div>
+        </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <img src="assets/total-reports.svg" alt="Total Reports" class="stat-icon-image">
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number"></div>
+                    <div class="stat-label">Total Reports</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <img src="assets/issues-resolved.svg" alt="Issues Resolved" class="stat-icon-image">
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number"></div>
+                    <div class="stat-label">Issues Resolved</div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <img src="assets/in-progress.svg" alt="In Progress" class="stat-icon-image">
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number"></div>
+                    <div class="stat-label">In Progress</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Content Container -->
+    <div class="content-container">
+        <!-- Filters Section -->
+        <aside class="filters-section">
+            <div class="filters-header">
+                <h3 class="filters-title">
+                    <img src="assets/filter-icon.svg" alt="Filter Icon">
+                    Filters
+                </h3>
+                <button class="clear-filters-btn" id="clearFiltersBtn">Clear All</button>
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label">Date Range</label>
+                <div class="date-inputs">
+                    <input type="date" class="date-input" id="startDate" placeholder="Start Date">
+                    <input type="date" class="date-input" id="endDate" placeholder="End Date">
+                </div>
+            </div>
+            
+            <div class="filter-group">
+                <label class="filter-label">Issue Type</label>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="potholes" name="issue-type" value="potholes" checked>
+                        <label for="potholes" class="checkbox-label">
+                            <span class="checkbox-icon"></span>
+                            Potholes
+                        </label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="lighting" name="issue-type" value="lighting" checked>
+                        <label for="lighting" class="checkbox-label">
+                            <span class="checkbox-icon"></span>
+                            Lighting
+                        </label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="drainage" name="issue-type" value="drainage" checked>
+                        <label for="drainage" class="checkbox-label">
+                            <span class="checkbox-icon"></span>
+                            Drainage
+                        </label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="traffic" name="issue-type" value="traffic" checked>
+                        <label for="traffic" class="checkbox-label">
+                            <span class="checkbox-icon"></span>
+                            Traffic
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="filter-actions">
+                <button class="apply-filters-btn" id="applyFiltersBtn">Apply Filters</button>
+            </div>
+        </aside>
+
+        <!-- Map Section -->
+        <section class="map-section">
+            <!-- Map Card -->
+            <div class="map-card">
+                <!-- Map Header -->
+                <div class="map-header">
+                    <h3 class="map-title">
+                        <img src="assets/fire.svg" alt="Map Icon" class="map-icon">
+                         Issue Map
+                    </h3>
+                    
+                </div>
+                
+                <!-- Map Container - Google Maps will replace this -->
+                <div class="map-container" id="google-map">
+                    <!-- This will be replaced by Google Maps -->
+                    <!-- Remove the placeholder image, let JavaScript handle it -->
+                </div>
+
+                <!-- Map Legend -->
+                <div class="map-legend">
+                    <div class="legend-title">Legend:</div>
+                    <div class="legend-items">
+                        <div class="legend-item">
+                            <span class="legend-color" style="background: #ff6b35;"></span>
+                            <span>Potholes</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color" style="background: #ffd23f;"></span>
+                            <span>Lighting</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color" style="background: #4dabf7;"></span>
+                            <span>Drainage</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color" style="background: #28a745;"></span>
+                            <span>Traffic</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Statistics Cards -->
+            <div class="map-stats-container">
+                <div class="map-stat-card">
+                    <div class="map-stat-header">
+                        <img src="assets/chart.svg" alt="Reports Icon" class="map-stat-icon">
+                        <h4 class="map-stat-title">Today's report issue numbers</h4>
+                    </div>
+                    <div class="map-stat-content">
+                        <div class="resolution-percentage">Loading...</div>
+                    </div>
+                </div>
+                
+                <div class="map-stat-card">
+                    <div class="map-stat-header">
+                        <img src="assets/check.svg" alt="Issues Icon" class="map-stat-icon">
+                        <h4 class="map-stat-title">Top Issue Type</h4>
+                    </div>
+                    <div class="map-stat-content">
+                        <div class="resolution-percentage">Loading...</div>
+                    </div>
+                </div>
+                
+               
+                
+                
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="map-actions">
+                <button class="share-report-btn">
+                    <img src="assets/share-icon.svg" alt="Share Icon">
+                    Share Report
+                </button>
+                <button class="export-pdf-btn">
+                    <img src="assets/pdf-icon.svg" alt="Export Icon">
+                    Export to PDF
+                </button>
+            </div>
+        </section>
+    </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-top">
+                <div class="footer-column">
+                    <a href="citizenhompage.html" class="footer-logo">
+                        <img src="assets/CityFix-logo.svg" alt="CityFix Logo" class="footer-logo-img" />
+                        <span class="brand-name">CityFix</span>
+                    </a>
+                    <p class="footer-description">Making our city better together.</p>
+                </div>
+
+                <div class="footer-column">
+                    <h4>Quick Links</h4>
+                    <a href="citizenhompage.html">Home</a>
+                    <a href="SubmitReport.html">Submit Report</a>
+                    <a href="BrowseReports.html">Browse Reports</a>
+                </div>
+
+                <div class="footer-column">
+                    <h4>Connect</h4>
+                    <a href="#about">About Us</a>
+                    <a href="#contact">Contact</a>
+                    <a href="#privacy">Privacy Policy</a>
+                </div>
+
+                <div class="footer-column">
+                    <h4>Follow Us</h4>
+                    <div class="social-icons">
+                        <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
+                            <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/twitter.svg" alt="Twitter" class="social-icon" />
+                        </a>
+                        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
+                            <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/facebook.svg" alt="Facebook" class="social-icon" />
+                        </a>
+                        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
+                            <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/instagram.svg" alt="Instagram" class="social-icon" />
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <hr />
+                <p>© 2025 CityFix. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="js/core/user-notifications.js"></script>
+    <script src="js/user/homepage.js"></script>
+    <script src="js/user/footer-user.js"></script>
+    <script src="js/core/script.js"></script>
+    <script src="js/features/user-reports-stats.js"></script>
+    <script src="js/features/map-stats.js"></script>
+    <script src="js/features/map-filters.js"></script>
+    
+    <!-- Google Maps API - Load with callback -->
+    <script async defer 
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC6jZx_eYnWWpBMMGEIVdNwmlNgWbfDqtM&libraries=places&callback=initMap">
+    </script>
+</body>
+</html>
