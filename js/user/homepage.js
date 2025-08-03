@@ -1375,23 +1375,48 @@ window.retryMapInitialization = function() {
 // Initialize user profile and welcome message on page load
 function initializeUserProfile() {
     // Replace profile icon with user image if signed in
-    const userId = localStorage.getItem('user_id');
-    console.log('[CityFix] user_id in localStorage:', userId);
+    let userId = null;
+    
+    // Try to get MongoDB _id from cityfix_user first
+    try {
+        const cityfixUser = JSON.parse(localStorage.getItem('cityfix_user') || '{}');
+        userId = cityfixUser._id || cityfixUser.userId;
+        console.log('[CityFix] cityfix_user data:', cityfixUser);
+        console.log('[CityFix] Using userId:', userId);
+    } catch (e) {
+        console.log('[CityFix] Error parsing cityfix_user:', e);
+    }
+    
+    // Fallback to legacy user_id if needed
+    if (!userId) {
+        userId = localStorage.getItem('user_id');
+        console.log('[CityFix] Fallback user_id:', userId);
+    }
+    
     const imgEl = document.getElementById('userProfileImage');
     if (userId && imgEl) {
-        fetch(`https://city-fix-backend.onrender.com/api/users/${userId}/image`)
-            .then(res => res.ok ? res.blob() : null)
-            .then(blob => {
-                if (blob) {
-                    const imgUrl = URL.createObjectURL(blob);
-                    imgEl.src = imgUrl;
-                } else {
+        // Only make API call if userId looks like a MongoDB ObjectId (24 hex characters)
+        if (userId.toString().match(/^[0-9a-fA-F]{24}$/)) {
+            fetch(`https://city-fix-backend.onrender.com/api/users/${userId}/image`)
+                .then(res => res.ok ? res.blob() : null)
+                .then(blob => {
+                    if (blob) {
+                        const imgUrl = URL.createObjectURL(blob);
+                        imgEl.src = imgUrl;
+                        console.log('[CityFix] ✅ Profile image loaded successfully');
+                    } else {
+                        imgEl.src = 'assets/profile.svg';
+                        console.log('[CityFix] 📷 No profile image, using default');
+                    }
+                })
+                .catch(error => {
+                    console.log('[CityFix] ❌ Error loading profile image:', error);
                     imgEl.src = 'assets/profile.svg';
-                }
-            })
-            .catch(err => {
-                imgEl.src = 'assets/profile.svg';
-            });
+                });
+        } else {
+            console.log('[CityFix] ⚠️ User ID is not MongoDB ObjectId format:', userId);
+            imgEl.src = 'assets/profile.svg';
+        }
     } else if (imgEl) {
         imgEl.src = 'assets/profile.svg';
     }

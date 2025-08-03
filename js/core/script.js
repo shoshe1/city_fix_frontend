@@ -73,9 +73,17 @@ function updateUserProfile() {
     const userProfileImages = document.querySelectorAll('#userProfileImage, #header-user-image');
     const userName = localStorage.getItem('user_name');
     const userEmail = localStorage.getItem('user_email');
-    const userId = localStorage.getItem('user_id');
     const userType = localStorage.getItem('user_type');
     const userToken = localStorage.getItem('user_token');
+    
+    // Get proper user ID (MongoDB _id preferred)
+    let userId = null;
+    try {
+        const cityfixUser = JSON.parse(localStorage.getItem('cityfix_user') || '{}');
+        userId = cityfixUser._id || cityfixUser.userId;
+    } catch (e) {
+        userId = localStorage.getItem('user_id');
+    }
     
     if (userName && userEmail && userId) {
         console.log(`👤 Updating profile for user: ${userName} (ID: ${userId}, Type: ${userType})`);
@@ -83,8 +91,25 @@ function updateUserProfile() {
         // Update profile images if they exist
         userProfileImages.forEach(img => {
             if (img) {
-                // You can set a real profile image URL here if you have one
-                // For now, keep the default but ensure it shows
+                // Load actual profile image if user ID is valid MongoDB ObjectId
+                if (userId.toString().match(/^[0-9a-fA-F]{24}$/)) {
+                    fetch(`https://city-fix-backend.onrender.com/api/users/${userId}/image`)
+                        .then(res => res.ok ? res.blob() : null)
+                        .then(blob => {
+                            if (blob) {
+                                const imgUrl = URL.createObjectURL(blob);
+                                img.src = imgUrl;
+                            } else {
+                                img.src = 'assets/profile.svg';
+                            }
+                        })
+                        .catch(error => {
+                            img.src = 'assets/profile.svg';
+                        });
+                } else {
+                    img.src = 'assets/profile.svg';
+                }
+                
                 img.style.display = 'block';
                 img.alt = `${userName} Profile`;
                 img.title = `${userName} (${userEmail})`;

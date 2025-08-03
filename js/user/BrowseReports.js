@@ -25,21 +25,39 @@ document.addEventListener('DOMContentLoaded', function() {
 // Load user profile image
 function loadUserProfileImage(userId) {
     if (userId) {
-        fetch(`https://city-fix-backend.onrender.com/api/users/${userId}/image`)
-            .then(res => res.ok ? res.blob() : null)
-            .then(blob => {
-                if (blob) {
-                    const imgUrl = URL.createObjectURL(blob);
+        // Only make API call if userId looks like a MongoDB ObjectId (24 hex characters)
+        if (userId.toString().match(/^[0-9a-fA-F]{24}$/)) {
+            fetch(`https://city-fix-backend.onrender.com/api/users/${userId}/image`)
+                .then(res => res.ok ? res.blob() : null)
+                .then(blob => {
+                    if (blob) {
+                        const imgUrl = URL.createObjectURL(blob);
+                        const imgEl = document.getElementById('userProfileImage');
+                        if (imgEl) {
+                            imgEl.src = imgUrl;
+                            console.log('✅ Profile image loaded successfully');
+                        }
+                    } else {
+                        const imgEl = document.getElementById('userProfileImage');
+                        if (imgEl) {
+                            imgEl.src = 'assets/profile.svg';
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.log('📷 Profile image not available, using default');
                     const imgEl = document.getElementById('userProfileImage');
                     if (imgEl) {
-                        imgEl.src = imgUrl;
-                        console.log('✅ Profile image loaded successfully');
+                        imgEl.src = 'assets/profile.svg';
                     }
-                }
-            })
-            .catch(error => {
-                console.log('📷 Profile image not available, using default');
-            });
+                });
+        } else {
+            console.log('⚠️ User ID is not MongoDB ObjectId format:', userId);
+            const imgEl = document.getElementById('userProfileImage');
+            if (imgEl) {
+                imgEl.src = 'assets/profile.svg';
+            }
+        }
     }
 }
 
